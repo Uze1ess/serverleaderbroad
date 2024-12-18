@@ -1,0 +1,15 @@
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+tmp
+.env
+*.sqlite3
+Dockerfile
+fly.toml
+tmp
+.dockerignore
+migrations
+.venv
