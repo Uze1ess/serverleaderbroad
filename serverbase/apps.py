@@ -66,11 +66,11 @@ class ServerbaseConfig(AppConfig):
 
         response = s.post(query_url, json=payload)
         if response.status_code == 200:
-            data = response.json()['result'][0]['data']
+            # data = response.json()['result'][0]['data']
+            pass
         else:
             print("Không thể lấy dữ liệu từ dataset:", response.text)
 
         df = pd.DataFrame(data, columns=['MSV' ,'Họ', 'Tên', 'Lớp', 'Ghi chú', '12/11', '15/11', '19/11', '22/11', '26/11', '29/11', '03/12', '06/12', '10/12', '13/12', 'Điểm danh', 'Phát biểu', 'Điểm project'])
 
         students_data_leaderbroad = calculate_ranking_scores(df)
-        print(students_data_leaderbroad)

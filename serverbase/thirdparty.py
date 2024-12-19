@@ -53,9 +53,25 @@ def get_first_mark4(username, password):
                         return result
             return None
 
-        return {"GPA": find_first_mark4(marks_data),
-                "Mã sinh viên": marks_data['student']['createdBy'],
-                "Họ và tên": marks_data['student']['displayName'],}
+
+        student = marks_data.get('student', {})
+        enrollment_class = student.get('enrollmentClass', {})
+        department = enrollment_class.get('department', {})
+
+        return {
+            "GPA": find_first_mark4(marks_data),
+            "Mã sinh viên": student.get('createdBy'),
+            "Họ và tên": student.get('displayName'),
+            "Lớp học": enrollment_class.get('classCode'),
+            "Khoa": department.get('name'),
+            "Năm nhập học": student.get('createDate', [None])[0],
+            "Năm bắt đầu học": student.get('modifyDate', [None])[0],
+            "Ngày sinh": student.get('birthDateString'),
+            "Nơi sinh": student.get('birthPlace'),
+            "Giới tính": student.get('gender'),
+            "Số điện thoại": student.get('phoneNumber'),
+        }
+    
     except Exception as e:
         return {"message": f"Error during data fetch: {e}"}
 
@@ -128,3 +144,21 @@ def get_total_student_study(df):
         }
     
     return json.dumps(result, ensure_ascii=False)
+
+def get_attendance_ratio(row):
+    # Lấy các giá trị từ cột thứ 6 đến cột thứ n-4
+    study_columns = row[5:-4]  # Từ cột thứ 6 đến cột trừ 4 cột cuối cùng
+
+    # Đếm số lượng cột có giá trị 'x' hoặc 'pb'
+    total_attendance_columns = sum(1 for value in study_columns if value in ['x', 'pb'])
+
+    # Đếm số lượng cột có giá trị 'v'
+    total_v_columns = sum(1 for value in study_columns if value == 'v')
+
+    # Tính tỷ lệ
+    if total_attendance_columns > 0:
+        ratio = total_v_columns / total_attendance_columns
+    else:
+        ratio = 0  # Tránh chia cho 0
+
+    return ratio
